@@ -2,6 +2,7 @@
 
 import { AppSideBar } from "@/components/app-sidebar"
 import { SidebarInset } from "@/components/ui/sidebar"
+import { PromptBar } from "@/components/promptbar"
 import { useEffect } from "react"
 import { useChatStore } from "@/store/store"
 
@@ -15,7 +16,9 @@ export function ChatInterface() {
   return (
     <>
       <AppSideBar />
-      <SidebarInset></SidebarInset>
+      <SidebarInset>
+        <PromptBar />
+      </SidebarInset>
     </>
   )
 }

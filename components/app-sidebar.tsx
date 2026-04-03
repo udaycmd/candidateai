@@ -34,11 +34,7 @@ import { useChatStore } from "@/store/store"
 import Link from "next/link"
 import Image from "next/image"
 
-interface AppSideBarProps extends React.ComponentProps<typeof Sidebar> {
-  onChatSelect?: (chatId?: string) => void
-}
-
-export function AppSideBar({ onChatSelect, ...props }: AppSideBarProps) {
+export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const {
     chats,
     currentChatId,
@@ -62,7 +58,7 @@ export function AppSideBar({ onChatSelect, ...props }: AppSideBarProps) {
     setCreating(true)
     try {
       const newChat = await createChat()
-      onChatSelect?.(newChat.id)
+      selectChat(newChat.id)
     } finally {
       setCreating(false)
     }
@@ -84,7 +80,6 @@ export function AppSideBar({ onChatSelect, ...props }: AppSideBarProps) {
 
   const handleSelect = (chatId: string) => {
     selectChat(chatId)
-    onChatSelect?.(chatId)
   }
 
   return (
@@ -111,14 +106,21 @@ export function AppSideBar({ onChatSelect, ...props }: AppSideBarProps) {
 
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={handleCreate}
-              disabled={creating || loading}
-              className="cursor-pointer hover:bg-sidebar-accent"
-            >
-              <Plus className="size-4" />
-              <span>New Chat</span>
-            </SidebarMenuButton>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarMenuButton
+                  onClick={handleCreate}
+                  disabled={creating || loading}
+                  className="cursor-pointer hover:bg-sidebar-accent"
+                >
+                  <Plus className="size-4" />
+                  <span>New Chat</span>
+                </SidebarMenuButton>
+              </TooltipTrigger>
+              <TooltipContent side="right" align="center">
+                Start a new chat
+              </TooltipContent>
+            </Tooltip>
           </SidebarMenuItem>
         </SidebarMenu>
 
