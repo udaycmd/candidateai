@@ -1,11 +1,12 @@
-import { Inter } from "next/font/google"
+import { Roboto } from "next/font/google"
+import { Toaster } from "sileo"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
-const inter = Inter({
+const roboto = Roboto({
   subsets: ["latin"],
   variable: "--font-sans",
   preload: true,
@@ -22,12 +23,15 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", inter.variable)}
+      className={cn("antialiased", roboto.variable)}
     >
       <body>
         <ThemeProvider>
           <TooltipProvider>
-            <SidebarProvider>{children}</SidebarProvider>
+            <SidebarProvider>
+              <Toaster position="top-center" />
+              {children}
+            </SidebarProvider>
           </TooltipProvider>
         </ThemeProvider>
       </body>
