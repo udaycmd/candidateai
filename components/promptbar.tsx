@@ -1,32 +1,71 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useChatStore } from "@/store/store"
-import { ArrowUp, X, Paperclip, File } from "lucide-react"
+import { ArrowUp, X, Plus, File } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { sileo } from "sileo"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { GlowingEffect } from "@/components/ui/glowing-effect"
 
-interface PromptbarProps {
+interface PromptBarProps {
   chatId?: string
   disabled?: boolean
   placeholder?: string
-  onSubmit: (message: string) => Promise<void>
   className?: string
+  autoFocus?: boolean
+  onSubmit: (data: { message: string; files?: File[] }) => Promise<void>
 }
 
 export function PromptBar({
   chatId,
   disabled = false,
-  placeholder = "Describe the problem...",
-  onSubmit,
+  placeholder = "Describe your problem...",
   className,
-}: PromptbarProps) {
+  autoFocus = true,
+  onSubmit,
+}: PromptBarProps) {
   const { createChat, loading } = useChatStore()
   const [message, setMessage] = useState<string>("")
   const [sending, setSending] = useState<boolean>(false)
-  const [attachment, setAttachment] = useState<File | null>(null)
-
+  const [attachments, setAttachments] = useState<File[]>([])
+  const [isFocused, setIsFocused] = useState<boolean>(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const fileinputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (autoFocus && textareaRef.current && !disabled && !loading) {
+      textareaRef.current.focus()
+    }
+  }, [autoFocus, disabled, loading])
+
+  const handleSubmit = async () => {
+    if (!message.trim() || sending || disabled) return
+
+    setSending(true)
+
+    try {
+      const activeChatId = chatId || (await createChat()).id
+      await onSubmit({
+        message: message,
+        files: attachments,
+      })
+    } catch (err) {
+      sileo.error({
+        title: "Something went wrong",
+      })
+      console.error(err instanceof Error ? err.message : { error: err })
+    } finally {
+      setMessage("")
+      setAttachments([])
+
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto"
+      }
+
+      textareaRef.current?.focus()
+      setSending(false)
+    }
+  }
 
   const adjustHeight = () => {
     const textarea = textareaRef.current
@@ -48,113 +87,101 @@ export function PromptBar({
     }
   }
 
-  const handleSubmit = async () => {
-    if (!message.trim() || sending || disabled) return
-
-    setSending(true)
-
-    try {
-      const activeChatId = chatId || (await createChat()).id
-      await onSubmit(message)
-    } catch (err) {
-      sileo.error({
-        title: "Something went wrong",
-      })
-      console.error(err instanceof Error ? err.message : { error: err })
-    } finally {
-      setMessage("")
-      setAttachment(null)
-
-      if (textareaRef.current) {
-        textareaRef.current.style.height = "auto"
-      }
-
-      textareaRef.current?.focus()
-      setSending(false)
+  const handleAttachFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const attachments = Array.from(e.target.files)
+      setAttachments((prev) => [...prev, ...attachments])
     }
   }
 
-  const handleAttachFile = () => {
-    const input = document.createElement("input")
-    input.type = "file"
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0]
-      if (file) setAttachment(file)
-    }
-    input.click()
-  }
-
-  const removeAttachment = () => {
-    setAttachment(null)
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index))
   }
 
   const isSendDisabled = !message.trim() || sending || disabled || loading
 
   return (
     <div className={cn("mx-auto w-full max-w-2xl", className)}>
-      {attachment && (
-        <div className="flex items-center gap-2 pt-2 pb-2">
-          <div className="flex items-center gap-1.5 rounded-md bg-primary/40 px-2 py-1 text-xs font-medium text-muted-foreground shadow-xl">
-            <File className="h-3 w-3 shrink-0" />
-            <span className="max-w-45 truncate" title={attachment.name}>
-              {attachment.name}
-            </span>
-            <button
-              type="button"
-              onClick={removeAttachment}
-              className="ml-1 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-muted-foreground/20"
-              aria-label="Remove attachment"
+      {attachments.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {attachments.map((file, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2"
             >
-              <X className="h-3 w-3" />
-            </button>
-          </div>
+              <span className="max-w-xs text-foreground">
+                <File className="h-4 w-4" />
+              </span>
+              <span className="max-w-xs truncate text-sm text-foreground">
+                {file.name}
+              </span>
+              <button
+                onClick={() => removeAttachment(index)}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+                aria-label={`Remove ${file.name}`}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
-      <div className="relative rounded-xl bg-background shadow-xl">
-        <Textarea
-          ref={textareaRef}
-          value={message}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          disabled={disabled || sending || loading}
-          rows={1}
-          className={cn(
-            "max-h-50 min-h-11 resize-none rounded-xl px-12 focus-visible:ring-3 focus-visible:ring-primary/40",
-            isSendDisabled && "opacity-50"
-          )}
+      <div
+        className={`relative rounded-2xl border border-border bg-background transition-all duration-200 ${
+          isFocused ? "input-focus" : ""
+        }`}
+      >
+        <GlowingEffect
+          borderWidth={2}
+          blur={0.5}
+          glow={true}
+          disabled={false}
         />
+        <div className="relative p-1">
+          <Textarea
+            ref={textareaRef}
+            value={message}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder={placeholder}
+            rows={1}
+            className="max-h-45 min-h-11 resize-none overflow-y-auto rounded-lg border-none bg-transparent px-2 py-1 shadow-none transition-opacity duration-1000 focus-visible:ring-0 focus-visible:outline-none dark:bg-transparent"
+          />
+        </div>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={handleAttachFile}
-          disabled={disabled || sending || loading}
-          className="absolute bottom-2 left-2 h-8 w-8 cursor-pointer rounded-full bg-primary/60 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label="Attach file"
-        >
-          <Paperclip className="h-4 w-4 text-muted-foreground" />
-        </Button>
+        <div className="flex items-center justify-between rounded-xl border-t border-border px-4 py-2">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => fileinputRef.current?.click()}
+              className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="Upload file"
+            >
+              <Plus className="h-5 w-5" />
+            </button>
 
-        <Button
-          onClick={handleSubmit}
-          disabled={isSendDisabled}
-          className="absolute right-2 bottom-2 h-8 w-8 cursor-pointer rounded-lg bg-foreground p-0 hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label="Submit prompt"
-        >
-          <ArrowUp className="h-4 w-4 text-background" />
-        </Button>
+            <input
+              ref={fileinputRef}
+              type="file"
+              multiple
+              onChange={handleAttachFiles}
+              className="hidden"
+              aria-label="File input"
+            />
+          </div>
+
+          <Button
+            onClick={handleSubmit}
+            disabled={isSendDisabled}
+            className="h-8 w-8 cursor-pointer rounded-full bg-primary/80 p-0 transition-all disabled:cursor-not-allowed disabled:opacity-70"
+            aria-label="Submit prompt"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-
-      <p className="mt-2 text-center text-xs text-muted-foreground">
-        Press{" "}
-        <kbd className="rounded-md bg-primary/60 px-1.5 py-0.5 font-mono text-xs">
-          Ctrl + Enter
-        </kbd>{" "}
-        to submit
-      </p>
     </div>
   )
 }
