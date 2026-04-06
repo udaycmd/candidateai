@@ -1,11 +1,22 @@
 import { useState, useRef, useEffect } from "react"
 import { useChatStore } from "@/store/store"
-import { ArrowUp, X, Plus, File } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"
+import { ArrowUp, X, Plus, File, Paperclip } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { sileo } from "sileo"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { GlowingEffect } from "@/components/ui/glowing-effect"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 
 interface PromptBarProps {
   chatId?: string
@@ -148,19 +159,39 @@ export function PromptBar({
             onBlur={() => setIsFocused(false)}
             placeholder={placeholder}
             rows={1}
-            className="max-h-45 min-h-11 resize-none overflow-y-auto rounded-lg border-none bg-transparent px-2 py-1 shadow-none transition-opacity duration-1000 focus-visible:ring-0 focus-visible:outline-none dark:bg-transparent"
+            className="max-h-45 min-h-11 resize-none overflow-y-auto rounded-lg border-none bg-transparent px-2 shadow-none transition-opacity duration-1000 focus-visible:ring-0 focus-visible:outline-none dark:bg-transparent"
           />
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border-t border-border px-4 py-2">
+        <div className="flex items-center justify-between rounded-2xl border-t border-border px-4 py-2">
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => fileinputRef.current?.click()}
-              className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="Upload file"
-            >
-              <Plus className="h-5 w-5" />
-            </button>
+            <Tooltip>
+              <DropdownMenu>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus-visible:outline-none"
+                      aria-label="More Options"
+                    >
+                      <Plus className="h-5 w-5" />
+                    </button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <DropdownMenuContent className="z-50 min-w-48 overflow-hidden rounded-lg border bg-background shadow-md">
+                  <DropdownMenuItem
+                    onClick={() => fileinputRef.current?.click()}
+                    className="flex cursor-pointer items-center gap-2 rounded-sm text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground focus:outline-none"
+                    aria-label="Upload file"
+                  >
+                    <Paperclip className="h-4 w-4" />
+                    <span>Upload Files</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <TooltipContent side="left" align="center">
+                More Options
+              </TooltipContent>
+            </Tooltip>
 
             <input
               ref={fileinputRef}
@@ -172,14 +203,21 @@ export function PromptBar({
             />
           </div>
 
-          <Button
-            onClick={handleSubmit}
-            disabled={isSendDisabled}
-            className="h-8 w-8 cursor-pointer rounded-full bg-primary/80 p-0 transition-all disabled:cursor-not-allowed disabled:opacity-70"
-            aria-label="Submit prompt"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={handleSubmit}
+                disabled={isSendDisabled}
+                className="h-8 w-8 cursor-pointer rounded-full bg-primary/80 p-0 transition-all disabled:cursor-not-allowed disabled:opacity-70"
+                aria-label="Submit prompt"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right" align="center">
+              Submit
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </div>

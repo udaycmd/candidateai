@@ -148,7 +148,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <button
                   onClick={() => loadChats()}
                   disabled={loading}
-                  className="rounded p-1 transition-colors hover:bg-muted"
+                  className="rounded-full p-1 transition-colors hover:bg-muted"
                 >
                   <RefreshCw
                     className={`size-4 ${loading ? "animate-spin" : ""}`}
