@@ -16,7 +16,7 @@ export function ChatInterface() {
 
   return (
     <>
-      <AppSideBar />
+      <AppSideBar className="border-none" />
       <SidebarInset className="flex max-h-screen flex-col justify-center bg-background">
         <header className="sticky top-0 z-10 flex items-center justify-between bg-background/50 px-4 py-3 backdrop-blur-sm">
           <SidebarTrigger className="-ml-1 transition-colors hover:bg-accent hover:text-accent-foreground" />

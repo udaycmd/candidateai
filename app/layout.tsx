@@ -1,4 +1,4 @@
-import { Roboto } from "next/font/google"
+import { Lexend } from "next/font/google"
 import { Toaster } from "sileo"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -6,7 +6,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
-const roboto = Roboto({
+const lexend = Lexend({
   subsets: ["latin"],
   variable: "--font-sans",
   preload: true,
@@ -23,7 +23,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", roboto.variable)}
+      className={cn("antialiased", lexend.variable)}
     >
       <body>
         <ThemeProvider>

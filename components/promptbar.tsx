@@ -139,12 +139,12 @@ export function PromptBar({
       )}
 
       <div
-        className={`relative rounded-2xl border border-border bg-background transition-all duration-200 ${
+        className={`relative rounded-2xl border bg-background shadow-xs shadow-amber-100 transition-all duration-200 ${
           isFocused ? "input-focus" : ""
         }`}
       >
         <GlowingEffect
-          borderWidth={2}
+          borderWidth={3}
           blur={0.5}
           glow={true}
           disabled={false}
@@ -170,10 +170,10 @@ export function PromptBar({
                 <TooltipTrigger asChild>
                   <DropdownMenuTrigger asChild>
                     <button
-                      className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus-visible:outline-none"
+                      className="rounded-full p-2 text-muted-foreground outline-1 transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus-visible:outline-none"
                       aria-label="More Options"
                     >
-                      <Plus className="h-5 w-5" />
+                      <Plus className="h-4 w-4" />
                     </button>
                   </DropdownMenuTrigger>
                 </TooltipTrigger>
