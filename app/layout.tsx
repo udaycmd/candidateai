@@ -1,4 +1,4 @@
-import { Lexend } from "next/font/google"
+import { Noto_Sans } from "next/font/google"
 import { Toaster } from "sileo"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -6,7 +6,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
-const lexend = Lexend({
+const noto = Noto_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   preload: true,
@@ -23,7 +23,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", lexend.variable)}
+      className={cn("antialiased", noto.variable)}
     >
       <body>
         <ThemeProvider>

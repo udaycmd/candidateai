@@ -25,11 +25,11 @@ export function ChatInterface() {
         </header>
 
         <div className="flex flex-1 flex-col items-center justify-center">
-          <h1 className="mb-4 animate-pulse text-lg font-bold md:text-2xl lg:text-3xl">
+          <h1 className="mb-4 text-lg font-bold md:text-2xl lg:text-3xl">
             Ready to get started?
           </h1>
 
-          <PromptBar onSubmit={async () => {}} placeholder="" />
+          <PromptBar onSubmit={async () => { }} placeholder="" />
         </div>
       </SidebarInset>
     </>

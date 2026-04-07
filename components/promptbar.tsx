@@ -139,9 +139,8 @@ export function PromptBar({
       )}
 
       <div
-        className={`relative rounded-2xl border bg-background shadow-xs shadow-amber-100 transition-all duration-200 ${
-          isFocused ? "input-focus" : ""
-        }`}
+        className={`relative rounded-2xl border bg-background shadow-xs shadow-amber-100 transition-all duration-200 ${isFocused ? "input-focus" : ""
+          }`}
       >
         <GlowingEffect
           borderWidth={3}
