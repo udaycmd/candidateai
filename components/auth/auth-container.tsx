@@ -1,34 +1,65 @@
-"use client"
+import { cn } from "@/lib/utils"
+import { Social } from "@/components/auth/social"
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
+import Link from "next/link"
+import Image from "next/image"
 
-import { ReactNode } from "react"
-import { Card } from "@/components/ui/card"
-
-interface AuthContainerProps {
-  title: string
-  description?: string
-  children: ReactNode
+interface AuthContainerProps extends React.ComponentProps<typeof Card> {
+  className?: string
+  headerLabel: string
+  subHeaderLabel: string
+  backHref: string
+  backLabel: string
 }
 
 export function AuthContainer({
-  title,
-  description,
-  children,
+  className,
+  headerLabel,
+  subHeaderLabel,
+  backHref,
+  backLabel,
+  ...props
 }: AuthContainerProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4 dark:from-gray-900 dark:to-gray-800">
-      <Card className="w-full max-w-md border-0 shadow-xl">
-        <div className="p-8">
-          <div className="mb-8 text-center">
-            <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
-              {title}
-            </h1>
-            {description && (
-              <p className="text-gray-600 dark:text-gray-400">{description}</p>
-            )}
+    <Card
+      className={cn(
+        "w-88 rounded border border-none bg-transparent ring-1 outline-none dark:backdrop-blur-md",
+        className
+      )}
+      {...props}
+    >
+      <CardHeader>
+        <div className="flex w-full flex-col items-center justify-center gap-y-1 text-center text-card-foreground">
+          <div className="relative h-10 w-10 shrink-0">
+            <Image
+              src="/logo.png"
+              alt="logo"
+              fill
+              className="object-contain dark:invert"
+              priority
+            />
           </div>
-          <div className="space-y-4">{children}</div>
+          <p className="text-xl font-light">{headerLabel}</p>
+          <p className="text-center text-xs font-medium text-muted-foreground">
+            {subHeaderLabel}
+          </p>
         </div>
-      </Card>
-    </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex w-full items-center justify-center gap-3">
+          <Social />
+        </div>
+      </CardContent>
+      <CardFooter>
+        <div className="flex w-full flex-col items-center justify-center gap-2">
+          <Link
+            className="text-xs font-medium text-muted-foreground hover:text-accent-foreground"
+            href={backHref}
+          >
+            {backLabel}
+          </Link>
+        </div>
+      </CardFooter>
+    </Card>
   )
 }

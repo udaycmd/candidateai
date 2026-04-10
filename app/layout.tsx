@@ -2,7 +2,6 @@ import { Noto_Sans } from "next/font/google"
 import { Toaster } from "sileo"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { SidebarProvider } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
@@ -28,10 +27,8 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <TooltipProvider>
-            <SidebarProvider>
-              <Toaster position="top-center" />
-              {children}
-            </SidebarProvider>
+            <Toaster position="top-center" />
+            {children}
           </TooltipProvider>
         </ThemeProvider>
       </body>

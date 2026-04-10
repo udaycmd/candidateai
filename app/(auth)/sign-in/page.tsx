@@ -1,6 +1,4 @@
 import { AuthContainer } from "@/components/auth/auth-container"
-import { OAuthProviders } from "@/components/auth/oauth-providers"
-import Link from "next/link"
 
 export const metadata = {
   title: "Sign In",
@@ -9,19 +7,11 @@ export const metadata = {
 
 export default function SignInPage() {
   return (
-    <AuthContainer title="Welcome Back" description="Sign in to your account">
-      <OAuthProviders />
-      <div className="border-t border-gray-200 pt-4 text-center dark:border-gray-700">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/sign-up"
-            className="font-semibold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-          >
-            Sign up here
-          </Link>
-        </p>
-      </div>
-    </AuthContainer>
+    <AuthContainer
+      headerLabel="Welcome Back"
+      subHeaderLabel="Sign into your account with"
+      backLabel="Don't have an account? Make one!"
+      backHref="/sign-up"
+    />
   )
 }
