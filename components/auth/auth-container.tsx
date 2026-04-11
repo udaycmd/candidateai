@@ -23,7 +23,7 @@ export function AuthContainer({
   return (
     <Card
       className={cn(
-        "w-88 rounded border border-none bg-transparent ring-1 outline-none dark:backdrop-blur-md",
+        "z-10 w-88 rounded border border-none bg-transparent shadow-none ring-0 outline-none dark:backdrop-blur-xs",
         className
       )}
       {...props}

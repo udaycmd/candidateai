@@ -29,7 +29,7 @@ export function ChatInterface() {
             Ready to get started?
           </h1>
 
-          <PromptBar onSubmit={async () => { }} placeholder="" />
+          <PromptBar onSubmit={async () => {}} placeholder="" />
         </div>
       </SidebarInset>
     </>

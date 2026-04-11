@@ -24,12 +24,13 @@ export function Social() {
     <div className="flex w-66 flex-col items-center gap-y-2">
       <Button
         size="sm"
-        className="w-full cursor-pointer rounded"
+        className="w-full cursor-pointer rounded-2xl"
         onClick={() => oauth("Google")}
       >
         <Image
           src="/google.svg"
           alt="google_login"
+          className="dark:invert"
           width={25}
           height={25}
           priority
@@ -38,12 +39,13 @@ export function Social() {
       </Button>
       <Button
         size="sm"
-        className="w-full cursor-pointer rounded"
+        className="w-full cursor-pointer rounded-2xl"
         onClick={() => oauth("Github")}
       >
         <Image
           src="/github.svg"
           alt="github_login"
+          className="dark:invert"
           width={25}
           height={25}
           priority

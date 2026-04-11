@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   MessageCircle,
   Plus,
@@ -27,12 +30,15 @@ import {
   Settings,
   Loader2,
   Trash2,
+  LogOut,
   MoreHorizontal,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useChatStore } from "@/store/store"
+import { authClient } from "@/lib/auth-client"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const {
@@ -47,12 +53,24 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     clearError,
   } = useChatStore()
 
+  const router = useRouter()
   const [creating, setCreating] = useState<boolean>(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const { data: session, isPending } = authClient.useSession()
 
   useEffect(() => {
     loadChats()
   }, [loadChats])
+
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/")
+        },
+      },
+    })
+  }
 
   const handleCreate = async () => {
     setCreating(true)
@@ -227,19 +245,86 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <SidebarMenuButton asChild>
-                  <Link href="/settings">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span className="text-xs">Settings</span>
-                  </Link>
-                </SidebarMenuButton>
-              </TooltipTrigger>
-              <TooltipContent side="right" align="center">
-                Settings
-              </TooltipContent>
-            </Tooltip>
+            <div className="flex items-center gap-3">
+              {isPending ? (
+                <>
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4" />
+                    <Skeleton className="h-4" />
+                  </div>
+                </>
+              ) : session ? (
+                <>
+                  <Image
+                    src={session.user.image || "/avatar.png"}
+                    alt={session.user.name}
+                    width={30}
+                    height={30}
+                    className="rounded-full object-cover"
+                    u
+                    priority
+                  />
+                  <div className="space-y-2">
+                    <span className="truncate text-sm leading-none font-medium">
+                      {session.user.name}
+                    </span>
+                    <span className="truncate text-xs leading-tight text-muted-foreground">
+                      {session.user.email}
+                    </span>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="shrink-0 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted"
+                        onClick={(e) => e.preventDefault()}
+                        tabIndex={-1}
+                      >
+                        <MoreHorizontal className="size-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => handleSignOut()}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <LogOut className="mr-2 size-4" />
+                        Logout
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-primary">
+                        <Link href="/settings">
+                          <Settings className="mr-2 size-4" />
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <SidebarMenuButton asChild className="py-5">
+                      <Link href="/sign-in">
+                        <Image
+                          src="/avatar.png"
+                          width={30}
+                          height={30}
+                          alt="avatar"
+                          className="rounded-full object-cover"
+                          priority
+                        />
+                        <span className="text-xs font-bold text-muted-foreground">
+                          Sign In
+                        </span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" align="center">
+                    Sign in to sync your chats
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
