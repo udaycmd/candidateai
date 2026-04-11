@@ -36,9 +36,9 @@ import {
 import { useState, useEffect } from "react"
 import { useChatStore } from "@/store/store"
 import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
 
 export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const {
@@ -262,7 +262,6 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     width={30}
                     height={30}
                     className="rounded-full object-cover"
-                    u
                     priority
                   />
                   <div className="space-y-2">
