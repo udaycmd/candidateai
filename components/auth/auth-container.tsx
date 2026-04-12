@@ -35,6 +35,7 @@ export function AuthContainer({
               src="/logo.png"
               alt="logo"
               fill
+              sizes="(max-width: 768px) 120px, 160px"
               className="object-contain dark:invert"
               priority
             />

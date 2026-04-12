@@ -112,6 +112,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     src="/logo.png"
                     alt="logo"
                     fill
+                    sizes="(max-width: 768px) 120px, 160px"
                     className="object-contain dark:invert"
                     priority
                   />
@@ -215,7 +216,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
-                            className="shrink-0 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted"
+                            className="shrink-0 rounded p-1 hover:bg-muted"
                             onClick={(e) => e.preventDefault()}
                             tabIndex={-1}
                           >

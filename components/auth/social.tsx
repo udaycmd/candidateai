@@ -3,11 +3,15 @@
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { sileo } from "sileo"
+import { useState } from "react"
 import Image from "next/image"
 
 export function Social() {
+  const [isPending, setIsPending] = useState<boolean>(false)
+
   const oauth = async (provider: "Google" | "Github") => {
     try {
+      setIsPending(true)
       await authClient.signIn.social({
         provider: provider.toLowerCase(),
         callbackURL: "/",
@@ -17,6 +21,8 @@ export function Social() {
         title: `${provider} sign in error`,
       })
       console.error(err instanceof Error ? err.message : { error: err })
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -24,6 +30,7 @@ export function Social() {
     <div className="flex w-66 flex-col items-center gap-y-2">
       <Button
         size="sm"
+        disabled={isPending}
         className="w-full cursor-pointer rounded-2xl"
         onClick={() => oauth("Google")}
       >
@@ -39,6 +46,7 @@ export function Social() {
       </Button>
       <Button
         size="sm"
+        disabled={isPending}
         className="w-full cursor-pointer rounded-2xl"
         onClick={() => oauth("Github")}
       >
