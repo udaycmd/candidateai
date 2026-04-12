@@ -4,7 +4,7 @@ const ChatInterface = dynamic(
   () => import("@/components/chat-interface").then((m) => m.ChatInterface),
   {
     ssr: true,
-    loading: () => <div className="" />,
+    loading: () => <div style={{ minHeight: 200 }} />,
   }
 )
 

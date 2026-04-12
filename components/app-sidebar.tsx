@@ -66,7 +66,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/")
+          router.push("/sign-in")
         },
       },
     })
@@ -265,13 +265,13 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     className="rounded-full object-cover"
                     priority
                   />
-                  <div className="space-y-2">
-                    <span className="truncate text-sm leading-none font-medium">
+                  <div className="space-y-1">
+                    <div className="truncate text-sm leading-none font-bold">
                       {session.user.name}
-                    </span>
-                    <span className="truncate text-xs leading-tight text-muted-foreground">
+                    </div>
+                    <div className="truncate text-xs leading-tight text-muted-foreground">
                       {session.user.email}
-                    </span>
+                    </div>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -288,14 +288,14 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         onClick={() => handleSignOut()}
                         className="text-destructive focus:text-destructive"
                       >
-                        <LogOut className="mr-2 size-4" />
-                        Logout
+                        <LogOut className="mr-1 size-4" />
+                        <span className="text-xs">Logout</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-primary">
                         <Link href="/settings">
-                          <Settings className="mr-2 size-4" />
-                          Settings
+                          <Settings className="mr-1 size-4" />
                         </Link>
+                        <span className="text-xs">Settings</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
