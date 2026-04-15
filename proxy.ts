@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { headers } from "next/headers"
-import { publicRoutes, authRoutes } from "@/lib/routes"
+import { protectedRoutes, authRoutes } from "@/lib/routes"
 import { auth } from "@/lib/auth"
 
 export async function proxy(request: NextRequest) {
@@ -8,17 +8,15 @@ export async function proxy(request: NextRequest) {
     headers: await headers(),
   })
 
-  const isSignedIn = !!session
-
   if (authRoutes.includes(request.nextUrl.pathname)) {
-    if (isSignedIn) {
+    if (session) {
       return NextResponse.redirect(new URL("/", request.nextUrl))
     }
 
     return NextResponse.next()
   }
 
-  if (!isSignedIn && !publicRoutes.includes(request.nextUrl.pathname)) {
+  if (protectedRoutes.includes(request.nextUrl.pathname) && !session) {
     return NextResponse.redirect(new URL("/sign-in", request.nextUrl))
   }
 

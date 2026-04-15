@@ -1,7 +1,7 @@
 /**
- * Array of public routes that are accessible to unauthenticated users.
+ * Array of protected routes that are accessible to authenticated users.
  */
-export const publicRoutes: string[] = ["/"]
+export const protectedRoutes: string[] = ["/settings"]
 
 /**
  * Array of public routes that are used for user authentication.

@@ -35,6 +35,7 @@ import {
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useChatStore } from "@/store/store"
+import { sileo } from "sileo"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -56,6 +57,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
   const [creating, setCreating] = useState<boolean>(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [isSigningOut, setIsSigningOut] = useState<boolean>(false)
   const { data: session, isPending } = authClient.useSession()
 
   useEffect(() => {
@@ -63,13 +65,27 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, [loadChats])
 
   const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/sign-in")
+    setIsSigningOut(true)
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/sign-in")
+          },
+          onError: () => {
+            sileo.error({
+              title: "Can't sign you out",
+            })
+          },
         },
-      },
-    })
+      })
+    } finally {
+      setIsSigningOut(false)
+    }
+  }
+
+  const gotoSettings = () => {
+    router.push("/settings")
   }
 
   const handleCreate = async () => {
@@ -247,7 +263,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="flex items-center gap-3">
-              {isPending ? (
+              {isPending || isSigningOut ? (
                 <>
                   <Skeleton className="h-10 w-10 rounded-full" />
                   <div className="space-y-2">
@@ -285,16 +301,19 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        onClick={() => handleSignOut()}
-                        className="text-destructive focus:text-destructive"
+                        onClick={handleSignOut}
+                        disabled={isSigningOut}
+                        className="cursor-pointer text-destructive focus:text-destructive"
                       >
                         <LogOut className="mr-1 size-4" />
                         <span className="text-xs">Logout</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-primary">
-                        <Link href="/settings">
-                          <Settings className="mr-1 size-4" />
-                        </Link>
+                      <DropdownMenuItem
+                        onClick={gotoSettings}
+                        disabled={isSigningOut}
+                        className="cursor-pointer text-primary"
+                      >
+                        <Settings className="mr-1 size-4" />
                         <span className="text-xs">Settings</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
