@@ -20,6 +20,10 @@ export const auth = betterAuth({
       clientId: env.GITHUB_OAUTH_CLIENT_ID,
       clientSecret: env.GITHUB_OAUTH_CLIENT_SECRET,
     },
+    google: {
+      clientId: env.GOOGLE_OAUTH_CLIENT_ID,
+      clientSecret: env.GOOGLE_OAUTH_CLIENT_SECRET,
+    },
   },
 
   database: prismaAdapter(prisma, {
