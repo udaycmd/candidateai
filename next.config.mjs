@@ -1,4 +1,5 @@
-import "./env.ts"
+import "./env/client.ts"
+import "./env/server.ts"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -7,6 +8,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
       },
     ],
   },

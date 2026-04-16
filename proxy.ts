@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { headers } from "next/headers"
-import { protectedRoutes, authRoutes } from "@/lib/routes"
+import { protectedRoutes, authRoutes } from "@/constants/routes"
 import { auth } from "@/lib/auth"
 
 export async function proxy(request: NextRequest) {

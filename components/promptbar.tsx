@@ -24,7 +24,11 @@ interface PromptBarProps {
   placeholder?: string
   className?: string
   autoFocus?: boolean
-  onSubmit: (data: { message: string; files?: File[] }) => Promise<void>
+  onSubmit: (data: {
+    message: string
+    files?: File[]
+    chatId: string
+  }) => Promise<void>
 }
 
 export function PromptBar({
@@ -59,6 +63,7 @@ export function PromptBar({
       await onSubmit({
         message: message,
         files: attachments,
+        chatId: activeChatId,
       })
     } catch (err) {
       sileo.error({
