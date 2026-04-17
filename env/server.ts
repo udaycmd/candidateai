@@ -9,6 +9,7 @@ export const serverEnv = createEnv({
     GITHUB_OAUTH_CLIENT_SECRET: z.string().min(1),
     GOOGLE_OAUTH_CLIENT_ID: z.string().min(1),
     GOOGLE_OAUTH_CLIENT_SECRET: z.string().min(1),
+    GEMINI_API_KEY: z.string().min(1),
   },
 
   experimental__runtimeEnv: process.env,

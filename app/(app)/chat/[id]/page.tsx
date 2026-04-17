@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState, useRef, use } from "react"
+import { useEffect, useRef, use, useState } from "react"
 import { AppSideBar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { PromptBar } from "@/components/promptbar"
 import { useChatStore } from "@/store/store"
 import { fetchMessages, addMessage } from "@/lib/api"
-import { Message } from "@/lib/types"
 import { Loader2 } from "lucide-react"
+import { useChat } from "@ai-sdk/react"
 
 export default function ChatPage({
   params,
@@ -17,9 +17,26 @@ export default function ChatPage({
 }) {
   const { id: chatId } = use(params)
   const { selectChat } = useChatStore()
-  const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const {
+    messages,
+    setMessages,
+    append,
+    reload,
+    isLoading: isAiLoading,
+  } = useChat({
+    api: "/api/chat",
+    body: {
+      chatId,
+    },
+    onResponse: (response: Response) => {
+      if (!response.ok) {
+        console.error("Failed to get AI response")
+      }
+    },
+  })
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -36,11 +53,34 @@ export default function ChatPage({
     scrollToBottom()
   }, [messages])
 
+  // Trigger AI response if the last message is from user and no assistant message exists
+  useEffect(() => {
+    if (
+      !loading &&
+      messages.length > 0 &&
+      messages[messages.length - 1].role === "user" &&
+      !isAiLoading
+    ) {
+      const hasAssistantMessage = messages.some((m) => m.role === "assistant")
+      if (!hasAssistantMessage) {
+        reload()
+      }
+    }
+  }, [loading, messages, isAiLoading, reload])
+
   async function loadMessages() {
     setLoading(true)
     try {
       const msgs = await fetchMessages(chatId)
-      setMessages(msgs)
+      // Map database messages to useChat format
+      setMessages(
+        msgs.map((m) => ({
+          id: m.id,
+          role: m.role.toLowerCase() === "user" ? "user" : "assistant",
+          content: m.content,
+          createdAt: new Date(m.createdAt),
+        }))
+      )
     } catch (err) {
       console.error(err)
     } finally {
@@ -56,23 +96,21 @@ export default function ChatPage({
     const content = data.message
     if (!content.trim()) return
 
-    // Optimistic update
-    const userMsg: Message = {
-      id: Math.random().toString(),
-      chatId,
-      role: "User",
-      content,
-      createdAt: new Date().toISOString(),
-    }
-    setMessages((prev) => [...prev, userMsg])
-
     try {
+      // Save user message to database first
       await addMessage(chatId, "User", content)
-      // In Phase 2 we will trigger AI response here
+
+      // Trigger AI response
+      await append({
+        role: "user",
+        content,
+      })
     } catch (err) {
       console.error(err)
     }
   }
+
+  const isPageLoading = loading && messages.length === 0
 
   return (
     <>
@@ -85,9 +123,9 @@ export default function ChatPage({
           <ThemeToggle className="rounded-full border-none" />
         </header>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 space-y-4 overflow-y-auto p-4">
           <div className="mx-auto max-w-3xl space-y-4 pb-20">
-            {loading ? (
+            {isPageLoading ? (
               <div className="flex h-full items-center justify-center py-20">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
@@ -100,12 +138,12 @@ export default function ChatPage({
                 <div
                   key={msg.id}
                   className={`flex ${
-                    msg.role === "User" ? "justify-end" : "justify-start"
+                    msg.role === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
                   <div
                     className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm shadow-sm md:text-base ${
-                      msg.role === "User"
+                      msg.role === "user"
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted text-muted-foreground"
                     }`}
@@ -123,6 +161,7 @@ export default function ChatPage({
           <PromptBar
             chatId={chatId}
             onSubmit={handleSubmit}
+            disabled={isAiLoading}
             placeholder="Ask a question..."
           />
         </div>

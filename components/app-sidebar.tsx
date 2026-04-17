@@ -46,12 +46,10 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     chats,
     currentChatId,
     loading,
-    error,
     loadChats,
     selectChat,
     createChat,
     deleteChat,
-    clearError,
   } = useChatStore()
 
   const router = useRouter()
@@ -133,7 +131,14 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     priority
                   />
                 </div>
-                <span className="truncate text-sm font-bold">Candidate AI</span>
+                <span className="flex items-center gap-2">
+                  <span className="truncate text-sm font-bold">
+                    Candidate AI
+                  </span>
+                  <span className="mb-3 shrink-0 rounded-lg bg-green-600 px-1.5 py-0.5 text-[10px] leading-none font-bold text-white">
+                    Alpha
+                  </span>
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -158,18 +163,6 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </Tooltip>
           </SidebarMenuItem>
         </SidebarMenu>
-
-        {error && (
-          <div className="flex flex-col items-center justify-between gap-2 rounded-md bg-destructive/30 px-2 py-1.5 text-xs text-destructive">
-            <span>{error}</span>
-            <button
-              onClick={clearError}
-              className="cursor-pointer rounded bg-destructive/30 p-1 hover:bg-destructive/20"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
       </SidebarHeader>
 
       <SidebarContent>
