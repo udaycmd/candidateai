@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Badge } from "@/components/ui/badge"
 import {
   MessageCircle,
   Plus,
@@ -32,6 +33,7 @@ import {
   Trash2,
   LogOut,
   MoreHorizontal,
+  LogIn,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useChatStore } from "@/store/store"
@@ -135,9 +137,9 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="truncate text-sm font-bold">
                     Candidate AI
                   </span>
-                  <span className="mb-3 shrink-0 rounded-lg bg-green-600 px-1.5 py-0.5 text-[10px] leading-none font-bold text-white">
-                    Alpha
-                  </span>
+                  <Badge variant="destructive" className="text-[10px]">
+                    Beta
+                  </Badge>
                 </span>
               </Link>
             </SidebarMenuButton>
@@ -198,10 +200,8 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuItem>
             ) : chats.length === 0 ? (
               <SidebarMenuItem>
-                <div className="px-2 py-1.5 text-center text-sm text-muted-foreground">
+                <div className="px-2 py-2 text-center text-sm text-muted-foreground">
                   No conversations yet
-                  <br />
-                  <span className="text-xs">Click "New Chat" to start</span>
                 </div>
               </SidebarMenuItem>
             ) : (
@@ -315,18 +315,17 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               ) : (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <SidebarMenuButton asChild className="py-5">
-                      <Link href="/sign-in">
-                        <Image
-                          src="/avatar.png"
-                          width={30}
-                          height={30}
-                          alt="avatar"
-                          className="rounded-full object-cover"
-                          priority
-                        />
-                        <span className="text-xs font-bold text-muted-foreground">
-                          Sign In
+                    <SidebarMenuButton
+                      asChild
+                      className="rounded-dotted border py-5"
+                    >
+                      <Link
+                        href="/sign-in"
+                        className="flex items-center justify-center"
+                      >
+                        <span className="flex items-center gap-1">
+                          <LogIn className="size-4" />
+                          <p>Log In</p>
                         </span>
                       </Link>
                     </SidebarMenuButton>

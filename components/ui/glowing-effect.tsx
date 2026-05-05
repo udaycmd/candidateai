@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, useCallback, useEffect, useRef } from "react"
+import { memo, useCallback, useEffect, useRef, Fragment } from "react"
 import { cn } from "@/lib/utils"
 import { animate } from "motion/react"
 
@@ -118,7 +118,7 @@ const GlowingEffect = memo(
     }, [handleMove, disabled])
 
     return (
-      <>
+      <Fragment>
         <div
           className={cn(
             "pointer-events-none absolute -inset-px hidden rounded-[inherit] border opacity-0 transition-opacity",
@@ -170,7 +170,7 @@ const GlowingEffect = memo(
             className={cn(
               "glow",
               "rounded-[inherit]",
-              'after:absolute after:inset-[calc(-1*var(--glowingeffect-border-width))] after:rounded-[inherit] after:content-[""]',
+              'after:absolute after:-inset-(--glowingeffect-border-width) after:rounded-[inherit] after:content-[""]',
               "after:[border:var(--glowingeffect-border-width)_solid_transparent]",
               "after:bg-fixed after:[background:var(--gradient)]",
               "after:opacity-(--active) after:transition-opacity after:duration-300",
@@ -180,7 +180,7 @@ const GlowingEffect = memo(
             )}
           />
         </div>
-      </>
+      </Fragment>
     )
   }
 )

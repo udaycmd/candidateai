@@ -8,7 +8,7 @@ export default function MainLayout({
 }>) {
   return (
     <SidebarProvider>
-      <AppSideBar className="border-none" />
+      <AppSideBar className="border-dotted" />
       {children}
     </SidebarProvider>
   )

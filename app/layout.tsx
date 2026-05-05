@@ -1,11 +1,11 @@
-import { Noto_Sans } from "next/font/google"
+import { JetBrains_Mono } from "next/font/google"
 import { Toaster } from "sileo"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
-const noto = Noto_Sans({
+const jb = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-sans",
   preload: true,
@@ -22,7 +22,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", noto.variable)}
+      className={cn("antialiased", jb.variable)}
     >
       <body>
         <ThemeProvider>

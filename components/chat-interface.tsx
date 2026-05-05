@@ -32,19 +32,21 @@ export function ChatInterface() {
 
   return (
     <Fragment>
-      <SidebarInset className="flex max-h-screen flex-col justify-center bg-background">
+      <SidebarInset className="flex w-full flex-1 flex-col bg-background">
         <header className="sticky top-0 z-10 flex items-center justify-between bg-background/50 px-4 py-3 backdrop-blur-sm">
           <SidebarTrigger className="-ml-1 transition-colors hover:bg-accent hover:text-accent-foreground" />
           <span className="ml-3 hidden text-sm font-medium text-muted-foreground sm:inline"></span>
           <ThemeToggle className="rounded-full border-none" />
         </header>
 
-        <main className="container flex flex-1 flex-col items-center justify-center">
+        <main className="flex w-full flex-1 flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
           <h1 className="mb-4 text-lg font-bold md:text-2xl lg:text-3xl">
             Ready to get started?
           </h1>
-
-          <PromptBar onSubmit={handleInitialSubmit} placeholder="" />
+          <PromptBar
+            onSubmit={handleInitialSubmit}
+            placeholder="Ask me anything"
+          />
         </main>
       </SidebarInset>
     </Fragment>

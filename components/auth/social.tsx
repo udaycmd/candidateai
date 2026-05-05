@@ -3,15 +3,19 @@
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { sileo } from "sileo"
-import { useState } from "react"
+import { Loader2 } from "lucide-react"
+import { useState, Fragment } from "react"
 import Image from "next/image"
 
-export function Social() {
-  const [isPending, setIsPending] = useState<boolean>(false)
+const providers = ["Google", "Github"] as const
+type Provider = (typeof providers)[number]
 
-  const oauth = async (provider: "Google" | "Github") => {
+export function Social() {
+  const [isPending, setIsPending] = useState<Provider | undefined>(undefined)
+
+  const oauth = async (provider: Provider) => {
     try {
-      setIsPending(true)
+      setIsPending(provider)
       await authClient.signIn.social({
         provider: provider.toLowerCase(),
         callbackURL: "/",
@@ -22,44 +26,37 @@ export function Social() {
       })
       console.error(err instanceof Error ? err.message : { error: err })
     } finally {
-      setIsPending(false)
+      setIsPending(undefined)
     }
   }
 
   return (
-    <div className="flex w-66 flex-col items-center gap-y-2">
-      <Button
-        size="sm"
-        disabled={isPending}
-        className="w-full cursor-pointer rounded-2xl"
-        onClick={() => oauth("Google")}
-      >
-        <Image
-          src="/google.svg"
-          alt="google_login"
-          className="dark:invert"
-          width={25}
-          height={25}
-          priority
-        />
-        <span className="text-foreground">Google</span>
-      </Button>
-      <Button
-        size="sm"
-        disabled={isPending}
-        className="w-full cursor-pointer rounded-2xl"
-        onClick={() => oauth("Github")}
-      >
-        <Image
-          src="/github.svg"
-          alt="github_login"
-          className="dark:invert"
-          width={25}
-          height={25}
-          priority
-        />
-        <span className="text-foreground">Github</span>
-      </Button>
+    <div className="flex w-60 flex-col items-center gap-y-2">
+      {providers.map((p) => (
+        <Button
+          size="sm"
+          disabled={isPending !== undefined}
+          className="w-full cursor-pointer rounded"
+          onClick={() => oauth(p)}
+          key={p}
+        >
+          {isPending === p ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Fragment>
+              <Image
+                src={`/${p.toLowerCase()}.svg`}
+                alt={`/${p.toLowerCase()}_login`}
+                className="dark:invert"
+                width={25}
+                height={25}
+                priority
+              />
+              <span className="text-foreground">{p}</span>
+            </Fragment>
+          )}
+        </Button>
+      ))}
     </div>
   )
 }

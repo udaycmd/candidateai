@@ -144,7 +144,7 @@ export function PromptBar({
       )}
 
       <div
-        className={`relative rounded-2xl border bg-background shadow-xs shadow-amber-100 transition-all duration-200 ${
+        className={`relative rounded-2xl border bg-background shadow-xs shadow-amber-100 transition-all duration-200 not-dark:border-gray-300 ${
           isFocused ? "input-focus" : ""
         }`}
       >
