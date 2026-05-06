@@ -11,6 +11,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
+import { ConfirmationDialog } from "@/components/confirmation"
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +36,7 @@ import {
   MoreHorizontal,
   LogIn,
 } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useChatStore } from "@/store/store"
 import { sileo } from "sileo"
 import { authClient } from "@/lib/auth-client"
@@ -55,6 +56,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   } = useChatStore()
 
   const router = useRouter()
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const [creating, setCreating] = useState<boolean>(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [isSigningOut, setIsSigningOut] = useState<boolean>(false)
@@ -98,19 +100,14 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
   }
 
-  const handleDelete = async (e: React.MouseEvent, chatId: string) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    if (!confirm("Delete this chat? This cannot be undone.")) return
-
+  const handleDelete = useCallback(async (chatId: string) => {
     setDeletingId(chatId)
     try {
       await deleteChat(chatId)
     } finally {
       setDeletingId(null)
     }
-  }
+  }, [])
 
   const handleSelect = (chatId: string) => {
     selectChat(chatId)
@@ -193,9 +190,8 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {loading && chats.length === 0 ? (
               <SidebarMenuItem>
-                <div className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground">
+                <div className="flex justify-center gap-2 px-2 py-1.5 text-sm text-muted-foreground">
                   <Loader2 className="size-4 animate-spin" />
-                  Loading chats...
                 </div>
               </SidebarMenuItem>
             ) : chats.length === 0 ? (
@@ -234,12 +230,12 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={(e) => handleDelete(e, chat.id)}
+                            onClick={() => handleDelete(chat.id)}
                             className="text-destructive focus:text-destructive"
                             disabled={deletingId === chat.id}
                           >
                             <Trash2 className="mr-2 size-4" />
-                            {deletingId === chat.id ? "Deleting..." : "Delete"}
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -255,7 +251,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-3">
+            <div className="group flex items-center gap-3">
               {isPending || isSigningOut ? (
                 <>
                   <Skeleton className="h-10 w-10 rounded-full" />
@@ -294,9 +290,9 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        onClick={handleSignOut}
+                        onClick={() => setIsDialogOpen(true)}
                         disabled={isSigningOut}
-                        className="cursor-pointer text-destructive focus:text-destructive"
+                        className="cursor-pointer text-destructive"
                       >
                         <LogOut className="mr-1 size-4" />
                         <span className="text-xs">Logout</span>
@@ -304,7 +300,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <DropdownMenuItem
                         onClick={gotoSettings}
                         disabled={isSigningOut}
-                        className="cursor-pointer text-primary"
+                        className="cursor-pointer"
                       >
                         <Settings className="mr-1 size-4" />
                         <span className="text-xs">Settings</span>

@@ -3,8 +3,8 @@
 import { google } from "@ai-sdk/google"
 import { customProvider } from "ai"
 
-export const candidate = customProvider({
+export const candidateModels = customProvider({
   languageModels: {
-    "text-model": google("gemini-2.0-flash-001"),
+    thinking: google("gemma-4-31b-it"),
   },
 })
