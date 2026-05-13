@@ -2,6 +2,7 @@ import { JetBrains_Mono } from "next/font/google"
 import { Toaster } from "sileo"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { ConfirmationDialogProvider } from "@/context/confirmation-dialog-provider"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
@@ -25,12 +26,14 @@ export default function RootLayout({
       className={cn("antialiased", jb.variable)}
     >
       <body>
-        <ThemeProvider>
-          <TooltipProvider>
-            <Toaster position="top-center" />
-            {children}
-          </TooltipProvider>
-        </ThemeProvider>
+        <ConfirmationDialogProvider>
+          <ThemeProvider>
+            <TooltipProvider>
+              <Toaster position="top-center" />
+              {children}
+            </TooltipProvider>
+          </ThemeProvider>
+        </ConfirmationDialogProvider>
       </body>
     </html>
   )

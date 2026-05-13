@@ -11,7 +11,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
-import { ConfirmationDialog } from "@/components/confirmation"
 import {
   Tooltip,
   TooltipContent,
@@ -36,6 +35,7 @@ import {
   MoreHorizontal,
   LogIn,
 } from "lucide-react"
+import { useConfirmationDialog } from "@/hooks/use-confirmation-dialog"
 import { useState, useEffect, useCallback } from "react"
 import { useChatStore } from "@/store/store"
 import { sileo } from "sileo"
@@ -56,7 +56,7 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   } = useChatStore()
 
   const router = useRouter()
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const { openDialog } = useConfirmationDialog()
   const [creating, setCreating] = useState<boolean>(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [isSigningOut, setIsSigningOut] = useState<boolean>(false)
@@ -230,7 +230,16 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={() => handleDelete(chat.id)}
+                            onClick={() =>
+                              openDialog({
+                                title: "Delete Chat?",
+                                description: "This operation can't be undone",
+                                confirmLabel: "Delete",
+                                onConfirm: async () => {
+                                  await handleDelete(chat.id)
+                                },
+                              })
+                            }
                             className="text-destructive focus:text-destructive"
                             disabled={deletingId === chat.id}
                           >
@@ -290,7 +299,14 @@ export function AppSideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        onClick={() => setIsDialogOpen(true)}
+                        onClick={() =>
+                          openDialog({
+                            title: "Are you sure you want to log out?",
+                            description: `Log out as ${session.user.email}`,
+                            confirmLabel: "Log Out",
+                            onConfirm: handleSignOut,
+                          })
+                        }
                         disabled={isSigningOut}
                         className="cursor-pointer text-destructive"
                       >

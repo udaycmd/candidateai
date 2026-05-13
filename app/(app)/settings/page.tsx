@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useConfirmationDialog } from "@/hooks/use-confirmation-dialog"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { Fragment, useEffect, useState } from "react"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
@@ -21,6 +22,7 @@ export default function SettingsPage() {
   const router = useRouter()
   const { data: session, isPending } = authClient.useSession()
   const [isDeleting, setIsDeleting] = useState(false)
+  const { openDialog } = useConfirmationDialog()
 
   useEffect(() => {
     if (!isPending && !session) {
@@ -133,7 +135,14 @@ export default function SettingsPage() {
                 </div>
                 <Button
                   variant="destructive"
-                  onClick={handleDeleteAccount}
+                  onClick={() =>
+                    openDialog({
+                      title: "Delete Account?",
+                      description: "This will permanently delete your account",
+                      confirmLabel: "Delete",
+                      onConfirm: handleDeleteAccount,
+                    })
+                  }
                   disabled={isDeleting}
                   className="cursor-pointer"
                 >

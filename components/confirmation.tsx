@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Loader2 } from "lucide-react"
 
-interface ConfirmationDialogProps extends React.ComponentProps<
+export interface ConfirmationDialogProps extends React.ComponentProps<
   typeof AlertDialog
 > {
   title: string
