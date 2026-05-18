@@ -14,20 +14,19 @@ export function Social() {
   const [isPending, setIsPending] = useState<Provider | undefined>(undefined)
 
   const oauth = async (provider: Provider) => {
-    try {
-      setIsPending(provider)
-      await authClient.signIn.social({
-        provider: provider.toLowerCase(),
-        callbackURL: "/",
-      })
-    } catch (err) {
-      sileo.error({
-        title: `${provider} sign in error`,
-      })
-      console.error(err instanceof Error ? err.message : { error: err })
-    } finally {
-      setIsPending(undefined)
-    }
+    setIsPending(provider)
+    await authClient.signIn.social({
+      provider: provider.toLowerCase(),
+      callbackURL: "/",
+      fetchOptions: {
+        onError: () => {
+          sileo.error({
+            title: `${provider}: No linked account found`,
+          })
+        },
+      },
+    })
+    setIsPending(undefined)
   }
 
   return (
