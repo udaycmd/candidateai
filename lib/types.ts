@@ -1,38 +1,13 @@
-export type Role = "User" | "Ai"
+import { UIMessage } from "ai"
+import { z } from "zod"
 
-export type Source = {
-  id: string
-  title: string
-  url?: string | null
-  snippet?: string | null
-  metadata?: any
-}
+const messageMetadataSchema = z.object({
+  createdAt: z.string(),
+  model: z.string(),
+  completionTime: z.number().nullable(),
+  inputTokens: z.number().nullable(),
+  outputTokens: z.number().nullable(),
+  totalTokens: z.number().nullable(),
+})
 
-export type Message = {
-  id: string
-  chatId: string
-  role: Role
-  content: string
-  createdAt: string
-  sources?: Source[]
-}
-
-export type Chat = {
-  id: string
-  title: string
-  userId: string
-  createdAt: string
-  updatedAt: string
-  messages?: Message[]
-}
-
-export type ApiError = Readonly<{
-  error?: string
-  code?: number
-  details?: unknown
-}>
-
-export type ApiResponse<T> = Readonly<{
-  data?: T
-  error?: ApiError
-}>
+export type ChatMessage = UIMessage<z.infer<typeof messageMetadataSchema>>
