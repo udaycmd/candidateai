@@ -8,7 +8,7 @@ export const ratelimiter = new Ratelimit({
   prefix: "upstash-ratelimit:unauth",
 })
 
-export function getUserIdentifier(req: Request): string {
+export function getClientIdentifier(req: Request): string {
   const forwarded = req.headers.get("x-forwarded-for")
   const realIp = req.headers.get("x-real-ip")
   const cfConnectingIp = req.headers.get("cf-connecting-ip")

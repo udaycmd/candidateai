@@ -11,3 +11,8 @@ const messageMetadataSchema = z.object({
 })
 
 export type ChatMessage = UIMessage<z.infer<typeof messageMetadataSchema>>
+
+export type AuthenticatedUser = {
+  userId: string
+  email: string
+}

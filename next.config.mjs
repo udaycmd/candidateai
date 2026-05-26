@@ -3,6 +3,8 @@ import "./env/server.ts"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  cacheComponents: true,
+
   images: {
     remotePatterns: [
       {
